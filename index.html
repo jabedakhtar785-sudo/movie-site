@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Movie Hindi Script Generator</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body{background:#0f0f14;color:white;font-family:Arial;padding:20px}
+.container{max-width:600px;margin:auto}
+input,button,textarea{
+width:100%;padding:12px;margin-top:10px;border-radius:8px;border:none}
+button{background:#e50914;color:white;font-size:16px}
+textarea{height:300px;background:#1c1c24;color:white}
+</style>
+</head>
+<body>
+<div class="container">
+<h2>🎬 Movie → Hindi Script</h2>
+
+<input id="movie" placeholder="Enter movie name">
+
+<button onclick="gen()">Generate Script</button>
+
+<textarea id="out" placeholder="Script will appear here"></textarea>
+</div>
+
+<script>
+const API_KEY = "";
+
+async function gen(){
+let movie=document.getElementById("movie").value;
+document.getElementById("out").value="Generating...";
+
+let res=await fetch("/api/generate",{
+method:"POST",
+headers: {
+  "Content-Type": "application/json"
+},
+body:JSON.stringify({
+model:"gpt-4o-mini",
+messages:[
+{role:"system",content:"You explain movies in Hindi for YouTube audience."},
+{role:"user",content:"Explain movie "+movie+" in Hindi in 12 minute script"}
+]
+})
+});
+
+let data=await res.json();
+document.getElementById("out").value=data.choices[0].message.content;
+}
+</script>
+</body>
+</html>
