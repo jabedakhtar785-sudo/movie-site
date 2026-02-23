@@ -6,24 +6,28 @@ export default async function handler(req, res) {
   try {
     const { movie } = req.body;
 
-    const r = await fetch("https://api.openai.com/v1/responses", {
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${process.env.OPENAI_KEY}`,
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${process.env.OPENAI_KEY}`
       },
       body: JSON.stringify({
-        model: "gpt-4.1-mini",
-        input: `Explain the movie ${movie} in Hindi as a YouTube narration script`
+        model: "gpt-4o-mini",
+        messages: [
+          { role: "system", content: "You explain movies in Hindi for YouTube audience." },
+          { role: "user", content: `Explain movie ${movie} in Hindi in 12 minute script` }
+        ]
       })
     });
 
-    const data = await r.json();
-    const text = data.output_text || "No script";
+    const data = await response.json();
 
-    res.status(200).json({ text });
+    res.status(200).json({
+      text: data.choices?.[0]?.message?.content || "No script generated"
+    });
 
-  } catch (e) {
-    res.status(500).json({ error: e.message });
+  } catch (err) {
+    res.status(500).json({ error: "Server error" });
   }
 }
