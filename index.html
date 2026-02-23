@@ -1,39 +1,77 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Movie → Hindi Script</title>
-  <style>
-    body { background:#0f0f14; color:white; font-family:sans-serif; text-align:center; padding:40px;}
-    input { width:80%; padding:12px; border-radius:6px; border:none; margin:10px;}
-    button { width:80%; padding:12px; background:red; color:white; border:none; border-radius:6px;}
-    textarea { width:80%; height:300px; margin-top:20px; background:#1c1c24; color:white; border:none; padding:12px;}
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0" />
+<title>Movie → Hindi Script</title>
+
+<style>
+body{
+  background:#0f1117;
+  color:white;
+  font-family:sans-serif;
+  display:flex;
+  justify-content:center;
+  padding:40px;
+}
+
+.box{
+  width:600px;
+}
+
+input,textarea,button{
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border-radius:6px;
+  border:none;
+}
+
+button{
+  background:#e11d2e;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+textarea{
+  height:300px;
+  background:#1c1f26;
+  color:white;
+}
+</style>
 </head>
+
 <body>
+<div class="box">
+  <h2>🎬 Movie → Hindi Script</h2>
 
-<h2>🎬 Movie → Hindi Script</h2>
+  <input id="movie" placeholder="Enter movie name" />
 
-<input id="movie" placeholder="Enter movie name"/>
-<br>
-<button onclick="gen()">Generate Script</button>
+  <button onclick="gen()">Generate Script</button>
 
-<br>
-<textarea id="out" placeholder="Script will appear here"></textarea>
+  <textarea id="out" placeholder="Script will appear here"></textarea>
+</div>
 
 <script>
 async function gen(){
-  let movie=document.getElementById("movie").value;
+  const movie = document.getElementById("movie").value;
   document.getElementById("out").value="Generating...";
 
-  let res=await fetch("/api/generate",{
-    method:"POST",
-    headers:{ "Content-Type":"application/json" },
-    body:JSON.stringify({movie})
-  });
+  try{
+    const res = await fetch("/api/generate",{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify({movie})
+    });
 
-  let data=await res.json();
-  document.getElementById("out").value=data.text || data.error;
+    const data = await res.json();
+    document.getElementById("out").value=data.text;
+  }catch(e){
+    document.getElementById("out").value="Error generating script";
+  }
 }
 </script>
 
